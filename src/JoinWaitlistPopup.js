@@ -1,27 +1,27 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes } from "react-icons/fa";
+// import { FaTimes } from "react-icons/fa";
 import { db } from "./firebaseConfig"; // Import Firestore instance
 import { collection, addDoc } from "firebase/firestore";
 // Styled Components
 
 
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  color: #f74c60;
-  font-size: 1.5rem;
-  cursor: pointer;
-  // transition: all 0.3s ease;
+// const CloseButton = styled.button`
+//   position: absolute;
+//   top: 10px;
+//   right: 10px;
+//   background: none;
+//   border: none;
+//   color: #f74c60;
+//   font-size: 1.5rem;
+//   cursor: pointer;
+//   // transition: all 0.3s ease;
 
-  &:hover {
-    color: #d9534f;
-  }
-`;
+//   &:hover {
+//     color: #d9534f;
+//   }
+// `;
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -140,7 +140,7 @@ const SuccessPopup = styled.div`
 `;
 
 // Main Component
-const JoinWaitlistPopup = () => {
+const JoinWaitlistPopup = ({joinWaitlistRef}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -188,7 +188,7 @@ const JoinWaitlistPopup = () => {
   return (
     <div>
       {/* Join Waitlist Button */}
-      <WaitlistButton onClick={() => setIsPopupOpen(true)}>
+      <WaitlistButton ref={joinWaitlistRef} onClick={() => setIsPopupOpen(true)}>
         Join Waitlist
       </WaitlistButton>
 

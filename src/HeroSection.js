@@ -130,7 +130,13 @@ const IllustrationContainer = styled.div`
 `;
 
 
-const HeroSection = () => {
+const HeroSection = ({joinWaitlistRef}) => {
+
+  const handleJoinWaitlistClick = () => {
+    if (joinWaitlistRef.current) {
+      joinWaitlistRef.current.click();
+    }
+  };
   return (
     <>
     <HeroContainer>
@@ -156,13 +162,16 @@ const HeroSection = () => {
           </HeroSubtitle>
           <ButtonGroup>
             <HeroButton
+              onClick={handleJoinWaitlistClick}
               primary
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               >
               <FaUserPlus /> Hire Talent
             </HeroButton>
-            <HeroButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <HeroButton whileHover={{ scale: 1.05 }} 
+              onClick={handleJoinWaitlistClick}
+            whileTap={{ scale: 0.95 }}>
               <FaSearch /> Find Gigs
             </HeroButton>
           </ButtonGroup>
@@ -180,7 +189,7 @@ const HeroSection = () => {
         </IllustrationContainer>
       </HeroWrapper>
   {/* Centered Waitlist Button */}
-  <WaitlistSection />
+  <WaitlistSection joinWaitlistRef={joinWaitlistRef}/>
   </HeroContainer>
             </>
   );

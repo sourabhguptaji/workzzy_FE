@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Navbar from "./Navbar";
 import HeroSection from "./HeroSection";
 import ServicesSection from "./ServicesSection";
@@ -9,11 +9,12 @@ import ReasonsSection from "./ReasonContainer";
 import AboutUs from "./AboutUs";
 
 function App() {
+  const joinWaitlistRef = useRef();
   return (
     <>
       <GlobalStyle />
-      <Navbar />
-      <HeroSection />
+      <Navbar joinWaitlistRef={joinWaitlistRef}/>
+      <HeroSection joinWaitlistRef={joinWaitlistRef}/>
       <ReasonsSection />
       <ServicesSection />
       <TestimonialsSection />

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import JoinWaitlistPopup from "./JoinWaitlistPopup";
 
 // Styled Components
@@ -50,7 +50,7 @@ const Subtitle = styled.p`
 
 
 
-const WaitlistSection = () => {
+const WaitlistSection = ({joinWaitlistRef}) => {
   return (
     <>
     <WaitlistContainer>
@@ -61,7 +61,7 @@ const WaitlistSection = () => {
         wait—join our waitlist today and be among the first to shape the future
         of freelancing.
       </Subtitle>
-    <JoinWaitlistPopup />
+    <JoinWaitlistPopup joinWaitlistRef={joinWaitlistRef}/>
     </WaitlistContainer>
     </>
   );

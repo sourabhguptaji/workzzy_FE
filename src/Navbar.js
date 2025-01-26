@@ -100,9 +100,13 @@ const MenuButton = styled.button`
   }
 `;
 
-const Navbar = () => {
+const Navbar = ({joinWaitlistRef}) => {
   const [isOpen, setIsOpen] = React.useState(false);
-
+  const handleJoinWaitlistClick = () => {
+    if (joinWaitlistRef.current) {
+      joinWaitlistRef.current.click();
+    }
+  };
   return (
     <NavBar>
       <div>Workzzy</div>
@@ -111,11 +115,11 @@ const Navbar = () => {
       </MenuButton>
       <NavList>
         <NavItem>
-          <JoinButton>Join Waitlist</JoinButton>
+          <JoinButton onClick={handleJoinWaitlistClick}>Join Waitlist</JoinButton>
         </NavItem>
       </NavList>
       <MobileMenu isOpen={isOpen}>
-        <JoinButton>Join Waitlist</JoinButton>
+        <JoinButton onClick={handleJoinWaitlistClick}>Join Waitlist</JoinButton>
       </MobileMenu>
     </NavBar>
   );
