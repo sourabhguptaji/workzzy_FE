@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Logo from "./logo.png"
 
 // Styled Components
 const NavBar = styled.nav`
@@ -109,7 +110,7 @@ const Navbar = ({joinWaitlistRef}) => {
   };
   return (
     <NavBar>
-      <div>Workzzy</div>
+      <div><img style={{width:'150px', display: 'flex'}} src={Logo} alt="WorkZzy" /></div>
       <MenuButton onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? "✖" : "☰"}
       </MenuButton>
