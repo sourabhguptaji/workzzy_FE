@@ -105,7 +105,7 @@ const Navbar = () => {
 
   return (
     <NavBar>
-      <div>Gigsy</div>
+      <div>Workzzy</div>
       <MenuButton onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? "✖" : "☰"}
       </MenuButton>
