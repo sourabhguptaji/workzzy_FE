@@ -1,28 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-// import { FaTimes } from "react-icons/fa";
-import { db } from "./firebaseConfig"; // Import Firestore instance
-import { collection, addDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import axios from "./api/axiosInstance"; // Import axios for API calls
+
 // Styled Components
-
-
-// const CloseButton = styled.button`
-//   position: absolute;
-//   top: 10px;
-//   right: 10px;
-//   background: none;
-//   border: none;
-//   color: #f74c60;
-//   font-size: 1.5rem;
-//   cursor: pointer;
-//   // transition: all 0.3s ease;
-
-//   &:hover {
-//     color: #d9534f;
-//   }
-// `;
-
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -38,116 +20,126 @@ const Overlay = styled(motion.div)`
 
 const PopupContainer = styled(motion.div)`
   background: #fff;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 12px;
   width: 90vw;
   max-width: 500px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
+  font-family: "Arial", sans-serif;
 `;
 
 const PopupHeader = styled.h2`
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
   color: #111;
+  font-weight: bold;
 `;
 
 const PopupSubtitle = styled.p`
   font-size: 1rem;
   margin-bottom: 2rem;
   color: #555;
+  line-height: 1.5;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 `;
 
 const Input = styled.input`
-  padding: 10px 15px;
+  padding: 12px 15px;
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 6px;
   &:focus {
     outline: none;
-    border-color: #f74c60;
-  }
-`;
-
-const Textarea = styled.textarea`
-  padding: 10px 15px;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  resize: none;
-  min-height: 100px;
-  &:focus {
-    outline: none;
-    border-color: #f74c60;
+    border-color: #ff758c;
+    box-shadow: 0 0 5px rgba(255, 117, 140, 0.5);
   }
 `;
 
 const SubmitButton = styled(motion.button)`
-  padding: 10px 20px;
+  padding: 12px 20px;
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background-color: #f74c60;
+  background-color: #ff758c;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  &:hover {
-    background-color: #f25d6d;
-  }
-`;
-const WaitlistButton = styled(motion.button)`
-  background-color: #f74c60;
-  color: white;
-  font-size: 1.2rem;
-  padding: 12px 30px;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    background-color: #f25d6d;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    padding: 10px 25px;
+    background-color: #ff5a7a;
   }
 `;
 
-const SuccessPopup = styled.div`
-  text-align: center;
-  color: #111;
+const FooterText = styled.p`
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 1.5rem;
 
-  h3 {
-    font-size: 1.6rem;
-    margin-bottom: 0.5rem;
-    color: #4caf50;
-  }
+  a {
+    color: #ff758c;
+    font-weight: bold;
+    text-decoration: none;
 
-  p {
-    font-size: 1rem;
-    color: #555;
+    &:hover {
+      text-decoration: underline;
+    }
   }
+`;
+
+const ErrorText = styled.p`
+  color: #d9534f;
+  font-size: 0.9rem;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
 `;
 
 // Main Component
-const JoinWaitlistPopup = ({joinWaitlistRef}) => {
+const JoinWaitlistPopup = ({ joinWaitlistRef }) => {
+  const navigate = useNavigate(); // Use useNavigate for redirection
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
-    phone: "",
-    feedback: "",
+    password: "",
   });
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    apiError: "",
+  });
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { email: "", password: "", apiError: "" };
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+      isValid = false;
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -156,41 +148,71 @@ const JoinWaitlistPopup = ({joinWaitlistRef}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Clear previous error messages
+    setErrors({ ...errors, apiError: "" });
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
     try {
-    // Save form data to Firestore
-    await addDoc(collection(db, "waitlist"), {
-      email: formData.email,
-      phone: formData.phone,
-      feedback: formData.feedback,
-      timestamp: new Date(),
-    });
-    setIsPopupOpen(false);
-    setIsSuccess(true);
-    setFormData({
-      email: "",
-      phone: "",
-      feedback: "",
-    })
-    setTimeout(() => setIsSuccess(false), 3000); // Auto-hide success message after 3 seconds
-  } catch (error) {
-    console.error("Error saving data to Firestore:", error);
-  }
+      // Replace Firebase logic with API call
+      const response = await axios.post("/api/auth/login", formData);
+
+      if (response.data.success) {
+        setIsPopupOpen(false);
+        setIsSuccess(true);
+        setFormData({
+          email: "",
+          password: "",
+        });
+        localStorage.setItem('workzzy_token', response.data.token)
+
+        // Redirect to dashboard after successful login
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 500); // Wait for success message to appear before redirecting
+      } else {
+        // Handle unsuccessful login (e.g., show an error message)
+        setErrors({ ...errors, apiError: response.data.message });
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setErrors({ ...errors, apiError: "Something went wrong. Please try again later." });
+    }
   };
 
   const handleOverlayClick = (e) => {
     // Close the popup only if the overlay is clicked, not the popup itself
     if (e.target === e.currentTarget) {
       setIsPopupOpen(false);
-      setIsSuccess(false)
+      setIsSuccess(false);
     }
   };
 
   return (
     <div>
       {/* Join Waitlist Button */}
-      <WaitlistButton ref={joinWaitlistRef} onClick={() => setIsPopupOpen(true)}>
-        Join Waitlist
-      </WaitlistButton>
+      <motion.button
+        ref={joinWaitlistRef}
+        onClick={() => setIsPopupOpen(true)}
+        style={{
+          backgroundColor: "#f74c60",
+          color: "white",
+          fontSize: "1.2rem",
+          padding: "12px 30px",
+          border: "none",
+          borderRadius: "30px",
+          cursor: "pointer",
+          fontWeight: "600",
+          transition: "all 0.3s ease",
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Log In
+      </motion.button>
 
       {/* Popup */}
       <AnimatePresence>
@@ -206,13 +228,11 @@ const JoinWaitlistPopup = ({joinWaitlistRef}) => {
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
             >
-
-              <PopupHeader>Join Waitlist</PopupHeader>
-
+              <PopupHeader>Welcome!</PopupHeader>
               <PopupSubtitle>
-                Be the first to know! Provide your details and tell us what
-                features you’re excited about.
+                Log in to your account to explore and manage your dashboard.
               </PopupSubtitle>
+
               <Form onSubmit={handleSubmit}>
                 <Input
                   type="email"
@@ -222,54 +242,32 @@ const JoinWaitlistPopup = ({joinWaitlistRef}) => {
                   onChange={handleChange}
                   required
                 />
+                {errors.email && <ErrorText>{errors.email}</ErrorText>}
+                
                 <Input
-                  type="tel"
-                  name="phone"
-                  placeholder="Enter your phone number"
-                  value={formData.phone}
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
                   onChange={handleChange}
                   required
                 />
-                <Textarea
-                  name="feedback"
-                  placeholder="What features are you looking for?"
-                  value={formData.feedback}
-                  onChange={handleChange}
-                />
+                {errors.password && <ErrorText>{errors.password}</ErrorText>}
+
                 <SubmitButton
                   type="submit"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Submit
+                  Log In
                 </SubmitButton>
-              </Form>
-            </PopupContainer>
-          </Overlay>
-        )}
-      </AnimatePresence>
 
-      {/* Success Popup */}
-      <AnimatePresence>
-        {isSuccess && (
-          <Overlay
-            onClick={handleOverlayClick}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <PopupContainer
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-            >
-              <SuccessPopup>
-                <h3>Thank You!</h3>
-                <p>
-                  Your details have been submitted successfully. We’ll keep you
-                  updated!
-                </p>
-              </SuccessPopup>
+                {errors.apiError && <ErrorText>{errors.apiError}</ErrorText>}
+              </Form>
+
+              <FooterText>
+                Don't have an account? <a href="/signup">Sign Up</a>
+              </FooterText>
             </PopupContainer>
           </Overlay>
         )}

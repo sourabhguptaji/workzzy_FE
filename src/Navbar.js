@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Logo from "./logo.png"
+import Logo from "./assets/logo/logo.png"
 
 // Styled Components
 const NavBar = styled.nav`

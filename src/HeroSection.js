@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { FaUserPlus, FaSearch } from "react-icons/fa";
 import { motion } from "framer-motion";
 import HeroStandOut from './heroStandOut.svg'
 import WaitlistSection from "./Waitlist";
+import { useLocation } from "react-router-dom"; 
 
 // Styled Components
 const HeroContainer = styled.section`
@@ -131,12 +132,21 @@ const IllustrationContainer = styled.div`
 
 
 const HeroSection = ({joinWaitlistRef}) => {
+  const location = useLocation();
 
   const handleJoinWaitlistClick = () => {
     if (joinWaitlistRef.current) {
       joinWaitlistRef.current.click();
     }
   };
+
+  useEffect(() => {
+    // Automatically run the function if the user comes from the signup page
+    console.log(location.state, "<==state")
+    if (location.state?.from === "signup") {
+      handleJoinWaitlistClick();
+    }
+  }, [location.state]);
   return (
     <>
     <HeroContainer>
