@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response, // Return response if it's OK
+  (response) => response,
   (error) => {
     if (error.response && error.response.data?.message === "Unauthorized") {
       localStorage.removeItem("workzzy_token"); // Clear token (optional)
