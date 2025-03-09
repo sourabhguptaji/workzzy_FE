@@ -86,14 +86,14 @@ const JobDetail = () => {
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post?.description) }}></p>
 
         {/* Job Poster Profile - Just Above Apply Button */}
-        <JobPosterInfo>
+        {/* <JobPosterInfo>
           <span>
             Posted by <strong>{post?.userId?.name || "Unknown Poster"}</strong>
           </span>
           <span>
             <FaEnvelope className="icon" /> {post?.userId?.email || "No Email Provided"}
           </span>
-        </JobPosterInfo>
+        </JobPosterInfo> */}
 
         <ApplyButtonContainer>
           <ApplyButton onClick={() => applyNow()}>Apply Now</ApplyButton>
