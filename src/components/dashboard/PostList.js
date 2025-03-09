@@ -1,22 +1,49 @@
 import styled from 'styled-components';
 import { FaMapMarkerAlt, FaTag, FaRupeeSign } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import DOMPurify from "dompurify";
 
-const PostList = ({ filteredPosts }) => {
+const EventPoster = styled.img`
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 15px;
+  margin-bottom: 15px;
+`;
+
+const PostList = ({ filteredPosts, type }) => {
+  const navigate = useNavigate()
   return (
     <ListContainer>
-      {filteredPosts?.length <= 0 && <NoPosts>No posts found in your area.</NoPosts>}
+      {filteredPosts?.length <= 0 && <NoPosts>No {type === "Events" ? "Events" :"Posts"} found in your area.</NoPosts>}
       {filteredPosts.map((post) => (
-        <PostCard key={post.id}>
+        <PostCard key={post._id}>
+          {type === "Events" && post.image && <EventPoster src={post?.image} alt="Event Poster" />}
           <PostHeader>
             <PostTitle>{post?.title.length > 50 ? post?.title.slice(0, 50) + '...' : post?.title}</PostTitle>
           </PostHeader>
-          <PostDescription>{post?.description.length > 100 ? post?.description.slice(0, 100) + '...' : post?.description}</PostDescription>
+          <PostDescription 
+           dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+              post?.description.length > 100
+                ? post?.description?.replace(
+                  /<\/?(strong|br|h[1-6])\s*\/?>/g,
+                  (match, tag) => (tag.startsWith("h") ? "<p>" : "")
+                ).slice(0, 100) + "..."
+                : post?.description?.replace(
+                  /<\/?(strong|br|h[1-6])\s*\/?>/g,
+                  (match, tag) => (tag.startsWith("h") ? "<p>" : "")
+                )
+            ),
+          }}/>
           <PostDetails>
             <DetailChip><StyledFaMapMarkerAlt /> {post?.city}</DetailChip>
             <DetailChip><StyledFaTag /> {post?.category}</DetailChip>
-            <DetailChip><StyledFaClock /> {post?.budget ?? `${post?.budgetMin} - ${post?.budgetMax}`}</DetailChip>
+            {type === "Posts" && <DetailChip><StyledFaClock /> {post?.budget ?? `${post?.budgetMin} - ${post?.budgetMax}`}</DetailChip>}
+            {type === "Events" && <DetailChip>{post?.eventType === "paid" ? (<><StyledFaClock />{post?.entryFee}/-</>) : "Free"}</DetailChip>}
           </PostDetails>
-          <ApplyButton>Apply Now</ApplyButton>
+          <ApplyButton onClick={() => navigate(`/detail/${post._id}`)}>View Detail</ApplyButton>
         </PostCard>
       ))}
     </ListContainer>
@@ -95,7 +122,7 @@ const DetailChip = styled.div`
   color: #ff9900;
 `;
 
-const ApplyButton = styled.button`
+export const ApplyButton = styled.button`
   width: 50%;
   padding: 12px;
   background: #111;

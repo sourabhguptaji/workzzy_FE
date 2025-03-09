@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; 
+import DOMPurify from "dompurify";
 import {
   FaTag,
   FaMapMarkerAlt,
@@ -11,122 +14,29 @@ import {
 import Navbar from "../dashboard/AdminNavbar";
 import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/Alert";
+import Footer from "../../Footer";
 
-// Theme Colors
-const themeColors = {
-  primary: "#000",
-  secondary: "#333",
-  background: "#F5F7FA",
-  textPrimary: "#333",
+
+
+export const themeColors = {
+  primary: "#1A1A2E",
+  secondary: "#16213E",
+  accent: "#0F3460",
+  background: "#EAEAEA",
+  textPrimary: "#1A1A2E",
   textSecondary: "#666",
-  border: "#E1E8F0",
+  border: "#D3D3D3",
 };
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  background-color: ${themeColors.background};
-  font-family: "Roboto", sans-serif;
-`;
-
-const FormContainer = styled.div`
-  width: 100%;
-  max-width: 600px;
-  background-color: #fff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 30px;
-  margin-top: 20px;
-`;
-
-const FormHeader = styled.h2`
-  font-size: 24px;
-  color: ${themeColors.textPrimary};
-  margin-bottom: 20px;
-  font-weight: 600;
-  text-align: center;
-`;
-
-const FormField = styled.div`
-  margin-bottom: 20px;
-  position: relative;
-`;
-
-const Label = styled.label`
-  font-size: 16px;
-  color: ${themeColors.textPrimary};
-  margin-bottom: 8px;
-  display: block;
-  font-weight: 500;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid ${themeColors.border};
-  border-radius: 6px;
-  background-color: #fff;
-  margin-bottom: 8px;
-  transition: border-color 0.3s ease-in-out;
-
-  &:focus {
-    border-color: ${themeColors.primary};
-    outline: none;
-  }
-
-  &::placeholder {
-    color: ${themeColors.textSecondary};
-  }
-`;
-
-const Textarea = styled.textarea`
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid ${themeColors.border};
-  border-radius: 6px;
-  background-color: #fff;
-  margin-bottom: 8px;
-  resize: vertical;
-  transition: border-color 0.3s ease-in-out;
-
-  &:focus {
-    border-color: ${themeColors.primary};
-    outline: none;
-  }
-
-  &::placeholder {
-    color: ${themeColors.textSecondary};
-  }
-`;
-
-const Dropdown = styled.select`
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid ${themeColors.border};
-  border-radius: 6px;
-  background-color: #fff;
-  margin-bottom: 8px;
-  transition: border-color 0.3s ease-in-out;
-
-  &:focus {
-    border-color: ${themeColors.primary};
-    outline: none;
-  }
-`;
-
-const RadioWrapper = styled.div`
+export const RadioWrapper = styled.div`
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 `;
 
-const RadioLabel = styled.label`
+export const RadioLabel = styled.label`
   display: flex;
   align-items: center;
   font-size: 14px;
@@ -134,14 +44,14 @@ const RadioLabel = styled.label`
   cursor: pointer;
 `;
 
-const RadioInput = styled.input`
+export const RadioInput = styled.input`
   margin-right: 8px;
   width: 18px;
   height: 18px;
   accent-color: ${themeColors.primary};
 `;
 
-const ErrorMessage = styled.div`
+export const ErrorMessage = styled.div`
   color: red;
   font-size: 14px;
   position: absolute;
@@ -150,41 +60,111 @@ const ErrorMessage = styled.div`
   margin-top: 5px;
 `;
 
-const SubmitButton = styled.button`
+
+export const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  background-color: ${themeColors.background};
+  font-family: "Poppins", sans-serif;
+`;
+
+export const FormContainer = styled.div`
+  width: 100%;
+  max-width: 700px;
+  background: #fff;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 40px;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+export const FormHeader = styled.h2`
+  font-size: 26px;
+  color: ${themeColors.textPrimary};
+  margin-bottom: 25px;
+  font-weight: 700;
+  text-align: center;
+`;
+
+export const FormField = styled.div`
+  margin-bottom: 20px;
+  position: relative;
+`;
+
+export const Label = styled.label`
+  font-size: 16px;
+  color: ${themeColors.textPrimary};
+  font-weight: 500;
+  display: block;
+  margin-bottom: 10px;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 2px solid ${themeColors.border};
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border 0.3s ease-in-out;
+  &:focus {
+    border-color: ${themeColors.accent};
+    outline: none;
+  }
+`;
+
+export const Dropdown = styled.select`
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 2px solid ${themeColors.border};
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border 0.3s ease-in-out;
+  &:focus {
+    border-color: ${themeColors.accent};
+    outline: none;
+  }
+`;
+
+export const SubmitButton = styled.button`
   padding: 14px 20px;
-  background-color: ${themeColors.primary};
+  background: linear-gradient(135deg, ${themeColors.primary}, ${themeColors.accent});
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
+  border-radius: 8px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  transition: background-color 0.3s ease-in-out;
-
+  transition: all 0.3s ease-in-out;
   &:hover {
-    background-color: #333;
+    background: ${themeColors.secondary};
   }
 `;
 
-const StepButton = styled.button`
-  background-color: ${themeColors.secondary};
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 20px;
-  width: 100%;
-  
-  &:hover {
-    background-color: #333;
-  }
-`;
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    [{ color: [] }, { background: [] }],
+    ["link"],
+    ["clean"],
+  ],
+};
 
 const CreatePost = () => {
     const navigate = useNavigate();
+    const { showToast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -281,7 +261,7 @@ const CreatePost = () => {
     if (valid) {
       const postData = {
         title,
-        description,
+        description: DOMPurify.sanitize(description),
         category,
         city,
         address,
@@ -294,41 +274,44 @@ const CreatePost = () => {
         const postResponse = await createPostApi(postData);
         if (postResponse.success) {
           localStorage.setItem("postId", postResponse?.post?._id);
-          setCurrentStep(2); // Go to the next step (contact info)
-        }
-      } catch (error) {
-        console.log(error?.message);
-      }
-    }
-  };
-
-  const handleContactSubmit = async (e) => {
-    e.preventDefault();
-    let valid = true;
-    const newError = { ...error };
-
-    if (!email && !phone) {
-      newError.contact = "Please provide either an email or a phone number.";
-      valid = false;
-    }
-
-    setError(newError);
-    if (valid) {
-      const contactData = {
-        email,
-        phone,
-      };
-      try {
-        const contactResponse = await submitContactApi(contactData);
-        if (contactResponse.success) {
-          console.log("Post created successfully!");
+          // setCurrentStep(2); // Go to the next step (contact info)
+          showToast("Your job has been saved in draft successfully!", "success")
           navigate('/profile')
         }
       } catch (error) {
-        console.log("Error occurred while submitting contact info.");
+        console.log(error?.message);
+        showToast(error?.message, "error")
       }
     }
   };
+
+  // const handleContactSubmit = async (e) => {
+  //   e.preventDefault();
+  //   let valid = true;
+  //   const newError = { ...error };
+
+  //   if (!email && !phone) {
+  //     newError.contact = "Please provide either an email or a phone number.";
+  //     valid = false;
+  //   }
+
+  //   setError(newError);
+  //   if (valid) {
+  //     const contactData = {
+  //       email,
+  //       phone,
+  //     };
+  //     try {
+  //       const contactResponse = await submitContactApi(contactData);
+  //       if (contactResponse.success) {
+  //         console.log("Post created successfully!");
+  //         navigate('/profile')
+  //       }
+  //     } catch (error) {
+  //       console.log("Error occurred while submitting contact info.");
+  //     }
+  //   }
+  // };
 
   return (
     <>
@@ -355,19 +338,18 @@ const CreatePost = () => {
               </FormField>
 
               <FormField>
-                <Label htmlFor="description">
-                  <FaInfoCircle /> Description
-                </Label>
-                <Textarea
-                  id="description"
-                  placeholder="Enter post description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-                {error.description && (
-                  <ErrorMessage>{error.description}</ErrorMessage>
-                )}
-              </FormField>
+  <Label htmlFor="description">
+    <FaInfoCircle /> Description
+  </Label>
+  <ReactQuill
+    value={description}
+    onChange={setDescription}
+    modules={modules}
+    theme="snow" 
+    placeholder="Enter job description..."
+  />
+  {error.description && <ErrorMessage>{error.description}</ErrorMessage>}
+</FormField>
 
               <FormField>
                 <Label htmlFor="category">
@@ -469,44 +451,13 @@ const CreatePost = () => {
                 )}
               </FormField>
 
-              <SubmitButton type="submit">Next</SubmitButton>
+              <SubmitButton type="submit">Save in Draft</SubmitButton>
             </form>
           )}
 
-          {currentStep === 2 && (
-            <form onSubmit={handleContactSubmit}>
-              <FormField>
-                <Label htmlFor="email">
-                  <FaEnvelope /> Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </FormField>
-
-              <FormField>
-                <Label htmlFor="phone">
-                  <FaPhone /> Phone Number
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </FormField>
-
-              <ErrorMessage>{error.contact}</ErrorMessage>
-              <StepButton type="submit">Submit Post</StepButton>
-            </form>
-          )}
         </FormContainer>
       </Container>
+      <Footer />
     </>
   );
 };

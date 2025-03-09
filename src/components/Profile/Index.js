@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaClipboard, FaCheckCircle, FaBriefcase, FaEdit } from 'react-icons/fa';
+import { FaClipboard, FaCheckCircle, FaBriefcase, FaEdit, FaTrash } from 'react-icons/fa';
 import Navbar from '../dashboard/AdminNavbar';
 import axiosInstance from '../../api/axiosInstance'; // assuming axiosInstance is configured
 import { useNavigate } from 'react-router-dom';
@@ -139,27 +139,26 @@ const Profile = () => {
   });
 
   // Fetch published posts from the API
+  const fetchDraftPosts = async () => {
+    try {
+      const response = await axiosInstance.get('/api/post/draft'); // API call to fetch draft posts
+      setPosts(response.data.posts); // Store posts in state
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
   useEffect(() => {
-    const fetchDraftPosts = async () => {
-      try {
-        const response = await axiosInstance.get('/api/post/draft'); // API call to fetch draft posts
-        setPosts(response.data.posts); // Store posts in state
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
 
     fetchDraftPosts();
   }, []);
-console.log(posts, "<==posts")
   // Handle publishing a draft post
-  const handlePublish = async (id) => {
+  const handlePublish = async (id, status="published") => {
     try {
-      const response = await axiosInstance.put(`/api/post/publish-draft/${id}`);
+      const response = await axiosInstance.put(`/api/post/publish-draft/${id}`, {
+        status
+      });
       if (response.status === 200) {
-        // Optionally, fetch the posts again after publishing to update the UI
-        const updatedPosts = posts.filter(post => post?._id !== id);
-        setPosts(updatedPosts); // Remove the published job from the draft list
+        fetchDraftPosts();
       }
     } catch (error) {
       console.error('Error publishing draft job:', error);
@@ -202,10 +201,17 @@ console.log(posts, "<==posts")
               posts.map((job) => (
                 <DraftJobItem key={job._id}>
                   <DraftJobTitle>{job.title}</DraftJobTitle>
+                  {console.log(posts, "<==post")}
                   <DraftActions>
-                    <DraftButton onClick={() => handlePublish(job._id)}>
+                    {
+                      job?.status === "draft" ? 
+                    <DraftButton onClick={() => handlePublish(job._id, 'published')}>
                       <FaEdit style={{ marginRight: '5px' }} /> Publish
                     </DraftButton>
+                    :<DraftButton style={{background: "red"}} onClick={() => handlePublish(job._id, 'draft')}>
+                      <FaTrash style={{ marginRight: '5px' }} /> Unpublish
+                    </DraftButton>
+                    }
                   </DraftActions>
                 </DraftJobItem>
               ))

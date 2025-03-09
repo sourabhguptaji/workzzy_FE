@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { FaHome, FaUser, FaRegEdit } from "react-icons/fa";
-import WorkzzyLogo from "../../assets/logo/logo.png"
-import { useLocation, useNavigate } from "react-router-dom";
+import { FaHome, FaUser, FaRegEdit, FaBriefcase, FaSignOutAlt } from "react-icons/fa";
+import WorkzzyLogo from "../../assets/logo/logo.png";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const NavbarContainer = styled.nav`
   width: 100%;
@@ -13,16 +13,10 @@ const NavbarContainer = styled.nav`
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-//   border-radius: 12px;
-//   position: fixed;
-//   top: 10px;
   left: 50%;
-//   transform: translateX(-50%);
-//   max-width: 95%;
   z-index: 1000;
   
   @media (min-width: 768px) {
-    // max-width: 80%;
     padding: 14px 30px;
   }
 `;
@@ -30,7 +24,7 @@ const NavbarContainer = styled.nav`
 const Logo = styled.div`
   font-size: 22px;
   font-weight: 700;
-  width:150px;
+  width: 150px;
   color: white;
   cursor: pointer;
   transition: 0.3s ease-in-out;
@@ -59,6 +53,7 @@ const NavItem = styled.li`
   cursor: pointer;
   transition: 0.3s ease-in-out;
   background: rgba(255, 255, 255, 0.9);
+  position: relative;
 
   &:hover {
     background: rgba(255, 255, 255, 0.8);
@@ -71,25 +66,76 @@ const NavItem = styled.li`
   }
 `;
 
+const DropdownMenu = styled.ul`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  display: ${(props) => (props.open ? "block" : "none")};
+  list-style: none;
+  padding: 10px 0;
+  min-width: 150px;
+
+  li {
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: black;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+`;
+
 const Navbar = () => {
-    const navigate = useNavigate()
-    const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {type} = useParams()
+  console.log(type, "<==type")
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   return (
     <NavbarContainer>
-      <Logo><img style={{width:'150px'}} src={WorkzzyLogo} alt="Workzzy" /></Logo>
+      <Logo>
+        <img style={{ width: "150px" }} src={WorkzzyLogo} alt="Workzzy" />
+      </Logo>
       <NavLinks>
-        <NavItem onClick={() => navigate('/create-post')}>
-          <FaRegEdit size={14} /> Create Post
-        </NavItem>
-        {
-          location?.pathname === '/profile' 
-          ?  <NavItem onClick={() => navigate('/dashboard')}>
-          <FaHome size={14} />
-        </NavItem>
-          : <NavItem onClick={() => navigate('/profile')}>
-          <FaUser size={14} />
-        </NavItem>
-        }
+        {!['/dashboard', '/create-event', '/create-post', '/detail-event'].includes(location.pathname) && !location.pathname?.startsWith('/detail-event')
+        && <NavItem onClick={() => navigate(type === "Events" ? "/create-event":"/create-post", {state: {type}})}>
+          <FaRegEdit size={14} /> Create
+        </NavItem>}
+        {location?.pathname === "/profile" ? (
+          <NavItem onClick={() => navigate("/dashboard")}>
+            <FaHome size={14} />
+          </NavItem>
+        ) : (
+          <NavItem onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <FaUser size={14} />
+            <DropdownMenu open={dropdownOpen}>
+              <li onClick={() => navigate("/profile")}>
+                <FaUser size={14} /> Profile
+              </li>
+              <li onClick={() => navigate("/your-jobs")}>
+                <FaBriefcase size={14} /> Your Jobs
+              </li>
+              <li onClick={() => navigate("/applied-jobs")}>
+                <FaBriefcase size={14} /> Applied Jobs
+              </li>
+              <li onClick={() => {
+                  navigate("/")
+                  localStorage.clear()
+                }}>
+                <FaSignOutAlt size={14} /> Logout
+              </li>
+            </DropdownMenu>
+          </NavItem>
+        )}
       </NavLinks>
     </NavbarContainer>
   );

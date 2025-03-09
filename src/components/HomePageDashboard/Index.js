@@ -9,7 +9,7 @@ import Footer from '../Footer/Index';
 
 const categories = [
   { icon: <FaBriefcase />, name: 'Jobs' , live: true},
-  { icon: <FaCalendarAlt />, name: 'Local Events' , live: true},
+  { icon: <FaCalendarAlt />, name: 'Events' , live: true},
   { icon: <FaTicketAlt />, name: 'Sell Tickets' , live: true},
   { icon: <FaTools />, name: 'Services' , live: false},
   { icon: <FaUtensils />, name: 'Food & Beverage' , live: false},

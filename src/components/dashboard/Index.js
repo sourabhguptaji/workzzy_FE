@@ -4,6 +4,8 @@ import { FaFilter, FaMapMarkerAlt, FaTag, FaClock, FaHeart, FaTimes, FaSearch } 
 import Navbar from './AdminNavbar'; // Import the Navbar
 import axiosInstance from '../../api/axiosInstance';
 import PostList from './PostList';
+import EventList from './EventList';
+import { useParams } from 'react-router-dom';
 
 // Theme Colors
 const themeColors = {
@@ -254,6 +256,7 @@ const Input = styled.input`
 `;
 
 const PostListing = () => {
+  const {type} = useParams()
   const [showFilters, setShowFilters] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -272,7 +275,11 @@ const PostListing = () => {
   useEffect(() => {
     const fetchPublishedPosts = async () => {
       try {
-        const response = await axiosInstance.get('/api/post/published');
+        let url = '/api/post/published'
+        if(type === "Events"){
+          url = 'api/event'
+        }
+        const response = await axiosInstance.get(url);
         setPosts(response.data.posts);
         setFilteredPosts(response.data.posts);
       } catch (error) {
@@ -394,9 +401,14 @@ const PostListing = () => {
               <FaFilter />
             </FilterIcon>
           </FilterSection>
-
+{
+  type === "Events" ? 
+  <EventList filteredPosts={filteredPosts} />
+:
 <PostList
-filteredPosts={filteredPosts} />
+filteredPosts={filteredPosts} 
+/>
+}
           {/* <PostList>
             {filteredPosts?.length <= 0 && <p>No posts found in your area.</p>}
             {filteredPosts.map((post) => (

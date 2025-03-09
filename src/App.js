@@ -13,6 +13,9 @@ import Dashboard from "./components/dashboard/Index";
 import CreatePost from "./components/CreatePost/Index";
 import Profile from "./components/Profile/Index";
 import HomepageDashboard from "./components/HomePageDashboard/Index";
+import JobDetail from "./components/JobDetail/Index";
+import CreateEvent from "./components/CreateEvent/Index";
+import EventDetail from "./components/EventDetail/Index";
 
 function Home() {
   const joinWaitlistRef = useRef();
@@ -37,9 +40,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<HomepageDashboard />} />
-        <Route path="/dashboard/:category" element={<Dashboard />} />
+        <Route path="/dashboard/:type" element={<Dashboard />} />
         <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/create-event" element={<CreateEvent />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/detail/:postId" element={<JobDetail />} />
+        <Route path="/detail-event/:eventId" element={<EventDetail />} />
         {/* Add more routes here as needed */}
       </Routes>
     </Router>
