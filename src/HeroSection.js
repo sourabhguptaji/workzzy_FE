@@ -141,7 +141,6 @@ const HeroSection = ({joinWaitlistRef}) => {
   };
 
   useEffect(() => {
-    // Automatically run the function if the user comes from the signup page
     console.log(location.state, "<==state")
     if (location.state?.from === "signup") {
       handleJoinWaitlistClick();
