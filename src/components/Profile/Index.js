@@ -1,226 +1,126 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaClipboard, FaCheckCircle, FaBriefcase, FaEdit, FaTrash } from 'react-icons/fa';
-import Navbar from '../dashboard/AdminNavbar';
-import axiosInstance from '../../api/axiosInstance'; // assuming axiosInstance is configured
-import { useNavigate } from 'react-router-dom';
-
-// Theme Colors
-const themeColors = {
-  primary: '#000',
-  secondary: '#333',
-  background: '#F5F7FA',
-  textPrimary: '#333',
-  textSecondary: '#666',
-  border: '#E1E8F0',
-};
+import { FaUser, FaBriefcase, FaCalendar, FaSignOutAlt, FaTicketAlt, FaBars } from 'react-icons/fa';
+import Navbar from "../dashboard/AdminNavbar";
+import Profile from './ProfileMenu';
+import JobListing from './DraftJobListing';
+import EventListing from './DraftEventListing';
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  max-width: 900px;
+  display: ${(props) => (props.isOpen ? '' : '')};
+  height: ${(props) => (props.isOpen ? '90vh' : '')};
   margin: auto;
-  background-color: ${themeColors.background};
-  font-family: 'Roboto', sans-serif;
 `;
 
-const ProfileContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #fff;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  width: 100%;
-`;
-
-const ProfileHeader = styled.h2`
-  font-size: 28px;
-  color: ${themeColors.textPrimary};
-  margin-bottom: 20px;
-  font-weight: 600;
-`;
-
-const UserInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
-`;
-
-const Avatar = styled.div`
-  background-color: #ccc;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-bottom: 20px;
-`;
-
-const Username = styled.h3`
-  font-size: 24px;
-  font-weight: 600;
-  color: ${themeColors.textPrimary};
-`;
-
-const Stats = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
-  font-size: 16px;
-  color: ${themeColors.textSecondary};
-`;
-
-const StatItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const StatLabel = styled.span`
-  font-weight: 500;
-  margin-top: 5px;
-`;
-
-const DraftJobsSection = styled.div`
-  margin-top: 40px;
-  width: 100%;
-`;
-
-const DraftJobItem = styled.div`
-  background-color: #f9f9f9;
+const Sidebar = styled.div`
+  width: ${(props) => (props.isOpen ? '250px' : '60px')};
+  background: white;
   padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 6px;
+  margin-top: -4rem;
+  position: fixed;
+  z-index: 99;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-`;
+  max-height: 90vh;
+  height: 90vh;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: width 0.3s ease-in-out;
+  border: 2px dashed #ddd;
+  border-radius: 10px;
+  overflow: hidden;
 
-const DraftJobTitle = styled.h4`
-  font-size: 18px;
-  color: ${themeColors.textPrimary};
-  font-weight: 500;
-`;
-
-const DraftActions = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const DraftButton = styled.button`
-  background-color: ${themeColors.primary};
-  color: white;
-  padding: 10px 20px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    background-color: #333;
+  @media (max-width: 768px) {
+    height: 100%;
+    z-index: 10;
   }
 `;
 
-const Profile = () => {
-  const navigate = useNavigate()
-  const [posts, setPosts] = useState([]);
-  const [userStats, setUserStats] = useState({
-    postsCreated: 5,
-    postsApplied: 8,
-    worksDone: 3,
-    draftJobs: [],
-  });
+const ToggleButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
-  // Fetch published posts from the API
-  const fetchDraftPosts = async () => {
-    try {
-      const response = await axiosInstance.get('/api/post/draft'); // API call to fetch draft posts
-      setPosts(response.data.posts); // Store posts in state
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  };
-  useEffect(() => {
+const Menu = styled.ul`
+  list-style: none;
+  padding: 0;
+  width: 100%;
+`;
 
-    fetchDraftPosts();
-  }, []);
-  // Handle publishing a draft post
-  const handlePublish = async (id, status="published") => {
-    try {
-      const response = await axiosInstance.put(`/api/post/publish-draft/${id}`, {
-        status
-      });
-      if (response.status === 200) {
-        fetchDraftPosts();
-      }
-    } catch (error) {
-      console.error('Error publishing draft job:', error);
-    }
+const MenuItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  background: ${(props) => (props.active ? '#f0f0f0' : 'transparent')};
+  border-radius: 5px;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+`;
+
+const Content = styled.div`
+  flex: 1;
+`;
+
+const Dashboard = () => {
+  const [activeSection, setActiveSection] = useState('Profile');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const sections = {
+    Profile: <Profile />,
+    Job: <JobListing />,
+    Events: <EventListing />,
+    // Ticket: <h2>Ticket Section</h2>,
   };
 
   return (
     <>
       <Navbar />
-      <Container>
-        <ProfileContainer>
-          <ProfileHeader>Your Profile</ProfileHeader>
-          <UserInfo>
-            <Avatar />
-            <Username>John Doe</Username>
-            <Stats>
-              <StatItem>
-                <FaClipboard size={24} color={themeColors.primary} />
-                <StatLabel>Posts Created</StatLabel>
-                <span>{userStats.postsCreated}</span>
-              </StatItem>
-              <StatItem>
-                <FaBriefcase size={24} color={themeColors.primary} />
-                <StatLabel>Posts Applied</StatLabel>
-                <span>{userStats.postsApplied}</span>
-              </StatItem>
-              <StatItem>
-                <FaCheckCircle size={24} color={themeColors.primary} />
-                <StatLabel>Works Done</StatLabel>
-                <span>{userStats.worksDone}</span>
-              </StatItem>
-            </Stats>
-          </UserInfo>
 
-          <DraftJobsSection>
-            <h3>Your Draft Jobs</h3>
-            {posts.length === 0 ? (
-              <p>No draft jobs available.</p>
-            ) : (
-              posts.map((job) => (
-                <DraftJobItem key={job._id}>
-                  <DraftJobTitle>{job.title}</DraftJobTitle>
-                  {console.log(posts, "<==post")}
-                  <DraftActions>
-                    {
-                      job?.status === "draft" ? 
-                    <DraftButton onClick={() => handlePublish(job._id, 'published')}>
-                      <FaEdit style={{ marginRight: '5px' }} /> Publish
-                    </DraftButton>
-                    :<DraftButton style={{background: "red"}} onClick={() => handlePublish(job._id, 'draft')}>
-                      <FaTrash style={{ marginRight: '5px' }} /> Unpublish
-                    </DraftButton>
-                    }
-                  </DraftActions>
-                </DraftJobItem>
-              ))
-            )}
-          </DraftJobsSection>
-        </ProfileContainer>
+      <Container isOpen={isOpen}>
+          <ToggleButton style={{alignItems: 'normal', marginTop: '1.5rem', marginLeft: '1rem'}} onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? '⤬' : <FaBars />}
+          </ToggleButton>
+          {isOpen && (
+        <Sidebar isOpen={isOpen}>
+          {/* Toggle button inside sidebar */}
+          <ToggleButton onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? '⤬' : <FaBars />}
+          </ToggleButton>
+            <Menu>
+              {Object.keys(sections).map((item) => (
+                <MenuItem key={item} active={activeSection === item} onClick={() => {
+                  setActiveSection(item);
+                  setIsOpen(false);
+                }}>
+                  {item === 'Profile' ? <FaUser /> :
+                   item === 'Job' ? <FaBriefcase /> :
+                   item === 'Events' ? <FaCalendar /> :
+                   item === 'Ticket' ? <FaTicketAlt /> :
+                   <FaSignOutAlt />}
+                  {isOpen && item}
+                </MenuItem>
+              ))}
+            </Menu>
+        </Sidebar>
+          )}
+
+        <Content>
+          {sections[activeSection]}
+        </Content>
       </Container>
     </>
   );
 };
 
-export default Profile;
+export default Dashboard;

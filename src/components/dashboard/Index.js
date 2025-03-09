@@ -41,13 +41,14 @@ const SideFilter = styled.div`
   margin-top: 20px;
   border: 1px dashed black;
   // border-right: 1px solid ${themeColors.border};
-  position: sticky;
+  // position: relative;
   top: 0;
   height: 60vh;
   // background: #fff;
   display: ${props => (props.show ? 'block' : 'none')};
   // box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
  border-radius: 12px;
+ z-index: 999;
   @media (max-width: 768px) {
     display: none;
   }
@@ -167,6 +168,7 @@ const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+  z-index: 1;
 `;
 
 const SearchBar = styled.input`
@@ -255,6 +257,55 @@ const Input = styled.input`
   background-color: #fff;
 `;
 
+const CheckboxContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const StyledLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #007bff;
+  }
+`;
+
+const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
+  display: none;
+`;
+
+const CustomCheckbox = styled.span`
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  display: inline-block;
+  border: 2px solid #007bff;
+  position: relative;
+  transition: all 0.3s;
+
+  ${HiddenCheckbox}:checked + & {
+    background-color: #007bff;
+  }
+
+  ${HiddenCheckbox}:checked + &::after {
+    content: "✔";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+  }
+`;
+
 const PostListing = () => {
   const {type} = useParams()
   const [showFilters, setShowFilters] = useState(true);
@@ -267,6 +318,8 @@ const PostListing = () => {
   const [maxBudget, setMaxBudget] = useState('');
   const [jobType, setJobType] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategories, setFilterCategories] = useState([]);
+  const [isPaid, setIsPaid] = useState(null);
 
   const toggleFilters = () => {
     setShowPopup(!showPopup);
@@ -282,6 +335,8 @@ const PostListing = () => {
         const response = await axiosInstance.get(url);
         setPosts(response.data.posts);
         setFilteredPosts(response.data.posts);
+        const uniqueCategories = [...new Set(response.data?.posts?.map(post => post?.category))];
+        setFilterCategories(uniqueCategories);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -322,6 +377,10 @@ const PostListing = () => {
       filtered = filtered.filter(post => post.jobType === jobType);
     }
 
+    if (type === "Events" && isPaid !== null) {
+      filtered = filtered.filter(post => (isPaid ? post.eventType === "paid" : post.eventType === "free"));
+    }
+
     if (searchTerm && !isSearchResent) {
       filtered = filtered.filter(post =>
         post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -343,25 +402,25 @@ const PostListing = () => {
       <Navbar />
       <Container>
         <SideFilter show={showFilters}>
-          <FilterHeader>Filter Posts</FilterHeader>
+          <FilterHeader>Filter {type}</FilterHeader>
           <Dropdown value={category} onChange={e => setCategory(e.target.value)}>
             <option value="">All Categories</option>
-            <option value="category1">Category 1</option>
-            <option value="category2">Category 2</option>
-            <option value="category3">Category 3</option>
+            {filterCategories?.map((cat, index) => (
+              <option key={index} value={cat}>{cat}</option>
+            ))}
           </Dropdown>
-          <Dropdown value={jobType} onChange={e => setJobType(e.target.value)}>
+          {/* <Dropdown value={jobType} onChange={e => setJobType(e.target.value)}>
             <option value="">All Job Types</option>
             <option value="part-time">Part-time</option>
             <option value="full-time">Full-time</option>
-          </Dropdown>
+          </Dropdown> */}
           <Dropdown value={city} onChange={e => setCity(e.target.value)}>
             <option value="">All Cities</option>
-            <option value="city1">City 1</option>
-            <option value="city2">City 2</option>
-            <option value="city3">City 3</option>
+            <option value="indore">Indore</option>
+            <option value="bhopal">Bhopal</option>
+            <option value="jabalpur">Jabalpur</option>
           </Dropdown>
-          <div>
+       {type === "Posts" &&   <div>
             <Input
               type="number"
               placeholder="Min Budget"
@@ -374,7 +433,31 @@ const PostListing = () => {
               value={maxBudget}
               onChange={e => setMaxBudget(e.target.value)}
             />
-          </div>
+          </div>}
+          {type === "Events" && (
+            <>
+            <CheckboxContainer>
+  <StyledLabel>
+    <HiddenCheckbox 
+      checked={isPaid === true} 
+      onChange={() => setIsPaid(isPaid === true ? null : true)} 
+    />
+    <CustomCheckbox />
+    Paid
+  </StyledLabel>
+
+  <StyledLabel>
+    <HiddenCheckbox 
+      checked={isPaid === false} 
+      onChange={() => setIsPaid(isPaid === false ? null : false)} 
+    />
+    <CustomCheckbox />
+    Free
+  </StyledLabel>
+</CheckboxContainer>
+         
+              </>
+          )}
           <FilterButton>
             <ApplyButton onClick={applyFilters}>Apply</ApplyButton>
             <ClearButton onClick={clearFilters}>Clear</ClearButton>
@@ -386,7 +469,7 @@ const PostListing = () => {
             <SearchContainer>
               <SearchBar
                 type="text"
-                placeholder="Search posts..."
+                placeholder={`Search ${type}...`}
                 value={searchTerm}
                 onChange={e => {
                   setSearchTerm(e.target.value)

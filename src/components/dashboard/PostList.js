@@ -16,10 +16,9 @@ const PostList = ({ filteredPosts, type }) => {
   const navigate = useNavigate()
   return (
     <ListContainer>
-      {filteredPosts?.length <= 0 && <NoPosts>No {type === "Events" ? "Events" :"Posts"} found in your area.</NoPosts>}
+      {filteredPosts?.length <= 0 && <NoPosts>No Posts found in your area.</NoPosts>}
       {filteredPosts.map((post) => (
         <PostCard key={post._id}>
-          {type === "Events" && post.image && <EventPoster src={post?.image} alt="Event Poster" />}
           <PostHeader>
             <PostTitle>{post?.title.length > 50 ? post?.title.slice(0, 50) + '...' : post?.title}</PostTitle>
           </PostHeader>
@@ -40,8 +39,7 @@ const PostList = ({ filteredPosts, type }) => {
           <PostDetails>
             <DetailChip><StyledFaMapMarkerAlt /> {post?.city}</DetailChip>
             <DetailChip><StyledFaTag /> {post?.category}</DetailChip>
-            {type === "Posts" && <DetailChip><StyledFaClock /> {post?.budget ?? `${post?.budgetMin} - ${post?.budgetMax}`}</DetailChip>}
-            {type === "Events" && <DetailChip>{post?.eventType === "paid" ? (<><StyledFaClock />{post?.entryFee}/-</>) : "Free"}</DetailChip>}
+           <DetailChip><StyledFaClock /> {post?.budget ?? `${post?.budgetMin} - ${post?.budgetMax}`}</DetailChip>
           </PostDetails>
           <ApplyButton onClick={() => navigate(`/detail/${post._id}`)}>View Detail</ApplyButton>
         </PostCard>

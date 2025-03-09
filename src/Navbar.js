@@ -116,11 +116,11 @@ const Navbar = ({joinWaitlistRef}) => {
       </MenuButton>
       <NavList>
         <NavItem>
-          <JoinButton onClick={handleJoinWaitlistClick}>Join Waitlist</JoinButton>
+          <JoinButton onClick={handleJoinWaitlistClick}>Login</JoinButton>
         </NavItem>
       </NavList>
       <MobileMenu isOpen={isOpen}>
-        <JoinButton onClick={handleJoinWaitlistClick}>Join Waitlist</JoinButton>
+        <JoinButton onClick={handleJoinWaitlistClick}>Login</JoinButton>
       </MobileMenu>
     </NavBar>
   );

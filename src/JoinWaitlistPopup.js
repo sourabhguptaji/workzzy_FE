@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import axios from "./api/axiosInstance"; // Import axios for API calls
+import { useToast } from "./context/Alert";
 
 // Styled Components
 const Overlay = styled(motion.div)`
@@ -105,6 +106,7 @@ const JoinWaitlistPopup = ({ joinWaitlistRef }) => {
   const navigate = useNavigate(); // Use useNavigate for redirection
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+   const { showToast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -160,7 +162,7 @@ const JoinWaitlistPopup = ({ joinWaitlistRef }) => {
       // Replace Firebase logic with API call
       const response = await axios.post("/api/auth/login", formData);
 
-      if (response.data.success) {
+      if (response.data?.success) {
         setIsPopupOpen(false);
         setIsSuccess(true);
         setFormData({
@@ -175,11 +177,11 @@ const JoinWaitlistPopup = ({ joinWaitlistRef }) => {
         }, 500); // Wait for success message to appear before redirecting
       } else {
         // Handle unsuccessful login (e.g., show an error message)
-        setErrors({ ...errors, apiError: response.data.message });
+        showToast(response.data.message, "error");
       }
     } catch (error) {
       console.error("Error during login:", error);
-      setErrors({ ...errors, apiError: "Something went wrong. Please try again later." });
+      showToast(error?.response?.data?.message  || "Something went wrong! please try again later", "error");
     }
   };
 

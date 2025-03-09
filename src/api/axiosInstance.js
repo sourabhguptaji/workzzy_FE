@@ -24,4 +24,15 @@ axiosInstance.interceptors.request.use(
   }
 );
 
+axiosInstance.interceptors.response.use(
+  (response) => response, // Return response if it's OK
+  (error) => {
+    if (error.response && error.response.data?.message === "Unauthorized") {
+      localStorage.removeItem("workzzy_token"); // Clear token (optional)
+      window.location.href = "/"; // Redirect to home/login page
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;

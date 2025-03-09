@@ -8,13 +8,14 @@ const NavbarContainer = styled.nav`
   width: 100%;
   padding: 12px 20px;
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: space-between;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  left: 50%;
-  z-index: 1000;
+  // left: 50%;
+  z-index: 99;
   
   @media (min-width: 768px) {
     padding: 14px 30px;
@@ -54,7 +55,7 @@ const NavItem = styled.li`
   transition: 0.3s ease-in-out;
   background: rgba(255, 255, 255, 0.9);
   position: relative;
-
+  z-index: 1000; 
   &:hover {
     background: rgba(255, 255, 255, 0.8);
     transform: translateY(-2px);
@@ -77,6 +78,7 @@ const DropdownMenu = styled.ul`
   list-style: none;
   padding: 10px 0;
   min-width: 150px;
+   z-index: 1050;
 
   li {
     padding: 10px 16px;
@@ -86,6 +88,7 @@ const DropdownMenu = styled.ul`
     gap: 8px;
     font-size: 14px;
     color: black;
+ z-index: 1050;
 
     &:hover {
       background: rgba(0, 0, 0, 0.05);
@@ -106,7 +109,7 @@ const Navbar = () => {
         <img style={{ width: "150px" }} src={WorkzzyLogo} alt="Workzzy" />
       </Logo>
       <NavLinks>
-        {!['/dashboard', '/create-event', '/create-post', '/detail-event'].includes(location.pathname) && !location.pathname?.startsWith('/detail-event')
+        {!['/dashboard', '/create-event', '/create-post', '/detail-event', "/profile"].includes(location.pathname) && !location.pathname?.startsWith('/detail-event')
         && <NavItem onClick={() => navigate(type === "Events" ? "/create-event":"/create-post", {state: {type}})}>
           <FaRegEdit size={14} /> Create
         </NavItem>}
@@ -117,17 +120,17 @@ const Navbar = () => {
         ) : (
           <NavItem onClick={() => setDropdownOpen(!dropdownOpen)}>
             <FaUser size={14} />
-            <DropdownMenu open={dropdownOpen}>
-              <li onClick={() => navigate("/profile")}>
+            <DropdownMenu style={{zIndex: 999}} open={dropdownOpen}>
+              <li style={{zIndex: 999}} onClick={() => navigate("/profile")}>
                 <FaUser size={14} /> Profile
               </li>
-              <li onClick={() => navigate("/your-jobs")}>
+              {/* <li style={{zIndex: 999}} onClick={() => navigate("/your-jobs")}>
                 <FaBriefcase size={14} /> Your Jobs
               </li>
-              <li onClick={() => navigate("/applied-jobs")}>
+              <li style={{zIndex: 999}} onClick={() => navigate("/applied-jobs")}>
                 <FaBriefcase size={14} /> Applied Jobs
-              </li>
-              <li onClick={() => {
+              </li> */}
+              <li style={{zIndex: 999}} onClick={() => {
                   navigate("/")
                   localStorage.clear()
                 }}>
