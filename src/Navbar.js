@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Logo from "./logo.png"
+import Logo from "./assets/logo/logo.png"
 
 // Styled Components
 const NavBar = styled.nav`
@@ -116,11 +116,11 @@ const Navbar = ({joinWaitlistRef}) => {
       </MenuButton>
       <NavList>
         <NavItem>
-          <JoinButton onClick={handleJoinWaitlistClick}>Join Waitlist</JoinButton>
+          <JoinButton onClick={handleJoinWaitlistClick}>Login</JoinButton>
         </NavItem>
       </NavList>
       <MobileMenu isOpen={isOpen}>
-        <JoinButton onClick={handleJoinWaitlistClick}>Join Waitlist</JoinButton>
+        <JoinButton onClick={handleJoinWaitlistClick}>Login</JoinButton>
       </MobileMenu>
     </NavBar>
   );
