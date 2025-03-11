@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Logo from "./assets/logo/logo.png"
+import { useNavigate } from "react-router-dom";
 
 // Styled Components
 const NavBar = styled.nav`
@@ -103,6 +104,7 @@ const MenuButton = styled.button`
 
 const Navbar = ({joinWaitlistRef}) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const navigate = useNavigate()
   const handleJoinWaitlistClick = () => {
     if (joinWaitlistRef.current) {
       joinWaitlistRef.current.click();
@@ -110,7 +112,7 @@ const Navbar = ({joinWaitlistRef}) => {
   };
   return (
     <NavBar>
-      <div><img style={{width:'150px', display: 'flex'}} src={Logo} alt="WorkZzy" /></div>
+      <div><img onClick={() => navigate("/dashboard")} style={{width:'150px', display: 'flex'}} src={Logo} alt="Workzzy" /></div>
       <MenuButton onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? "✖" : "☰"}
       </MenuButton>
