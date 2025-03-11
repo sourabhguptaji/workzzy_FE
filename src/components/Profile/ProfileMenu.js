@@ -333,7 +333,7 @@ console.log(updatedData, "<==updated data")
           <Detail><FaBriefcase /> Skills: <EditableField field="skills" /></Detail>
           <Detail><FaMapMarkerAlt /> Location: <EditableField field="location" /></Detail>
           <Detail><FaEnvelope /> Email: {profileData?.email}</Detail>
-          <Detail><FaPhone /> Phone: {profileData?.phone}</Detail>
+          <Detail><FaPhone /> Phone: <EditableField field="phone" /></Detail>
           </DetailsContainer>
           <ResumeContainer
   onDragOver={(e) => e.preventDefault()}

@@ -106,7 +106,7 @@ const Navbar = () => {
   return (
     <NavbarContainer>
       <Logo>
-        <img style={{ width: "150px" }} src={WorkzzyLogo} alt="Workzzy" />
+        <img onClick={() => navigate("/dashboard")}  style={{ width: "150px" }} src={WorkzzyLogo} alt="Workzzy" />
       </Logo>
       <NavLinks>
         {!['/dashboard', '/create-event', '/create-post', '/detail-event', "/profile"].includes(location.pathname) && !location.pathname?.startsWith('/detail-event')

@@ -112,7 +112,7 @@ const Navbar = ({joinWaitlistRef}) => {
   };
   return (
     <NavBar>
-      <div><img onClick={() => navigate("/dashboard")} style={{width:'150px', display: 'flex'}} src={Logo} alt="Workzzy" /></div>
+      <div><img style={{width:'150px', display: 'flex'}} src={Logo} alt="Workzzy" /></div>
       <MenuButton onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? "✖" : "☰"}
       </MenuButton>

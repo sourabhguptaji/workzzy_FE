@@ -181,9 +181,7 @@ const SignupPage = () => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email.";
     }
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required.";
-    } else if (!/^\d{10}$/.test(formData.phone)) {
+    if (formData.phone.trim() && !/^\d{10}$/.test(formData.phone)) {
       newErrors.phone = "Enter a valid 10-digit phone number.";
     }
     if (!formData.password.trim()) {
@@ -248,7 +246,7 @@ const SignupPage = () => {
               {errors.name && <ErrorText>{errors.name}</ErrorText>}
               <Input type="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
               {errors.email && <ErrorText>{errors.email}</ErrorText>}
-              <Input type="text" name="phone" placeholder="Enter your phone" value={formData.phone} onChange={handleChange} required />
+              <Input type="text" name="phone" placeholder="Enter your phone (optional)" value={formData.phone} onChange={handleChange} />
               {errors.phone && <ErrorText>{errors.phone}</ErrorText>}
               <Input type="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
               {errors.password && <ErrorText>{errors.password}</ErrorText>}
