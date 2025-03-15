@@ -149,7 +149,7 @@ const EventList = ({ filteredPosts }) => {
     <ListContainer>
       {filteredPosts?.length <= 0 && <NoEvents>No events found in your area.</NoEvents>}
 
-      {[...filteredPosts, ...filteredPosts].map((event) => (
+      {[...filteredPosts].map((event) => (
         <EventCard key={event._id}>
        <EventPoster>
   {event.image && <img src={event.image} alt="Blurred Background" className="blur-bg" />}
