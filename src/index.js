@@ -7,9 +7,7 @@ import ReactGA from "react-ga4";
 
 // Only initialize Google Analytics in production
 // if (window.location.hostname !== "localhost") {
-  ReactGA.initialize("G-RW0HCEKR36", {
-    testMode: true
-  });
+  ReactGA.initialize("G-RW0HCEKR36");
 // }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
