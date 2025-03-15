@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Workzzy",
+  "name": "Workzzy - Find Jobs, Gigs & Events",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +18,11 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "description": "Workzzy helps you find jobs, gigs, and events near you. Connect with employers, freelancers, and local businesses easily.",
+  "lang": "en",
+  "orientation": "portrait"
 }
