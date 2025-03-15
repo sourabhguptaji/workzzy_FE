@@ -6,7 +6,7 @@ const AuthChecker = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("workzzy_token"); // Replace with your auth token key
-    if (!token) {
+    if (!token && token?.length <= 50) {
       navigate("/"); // Redirect to home/login page if no token
     }
   }, [navigate]);
