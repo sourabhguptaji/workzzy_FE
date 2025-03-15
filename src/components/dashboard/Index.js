@@ -28,11 +28,12 @@ const Container = styled.div`
 
 const MainContent = styled.div`
   flex: 1;
-  padding: 30px;
+  padding: 20px;
   background-color: #fff;
   border-radius: 12px;
   // margin-top: 20px;
   // box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow-y: hidden;
 `;
 
 const SideFilter = styled.div`
@@ -188,64 +189,6 @@ const SearchIcon = styled(FaSearch)`
   cursor: pointer;
 `;
 
-// const PostList = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-//   gap: 20px;
-//   margin-top: 20px;
-// `;
-
-const PostItem = styled.div`
-  padding: 20px;
-  border: 1px solid ${themeColors.border};
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
-  }
-`;
-
-const PostTitle = styled.h3`
-  margin: 0;
-  font-size: 24px;
-  color: ${themeColors.textPrimary};
-  font-weight: 700;
-`;
-
-const PostDescription = styled.p`
-  margin: 8px 0;
-  color: ${themeColors.textSecondary};
-  font-size: 16px;
-`;
-
-const PostDetails = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 15px;
-  flex-wrap: wrap;
-  color: ${themeColors.textSecondary};
-`;
-
-const PostButton = styled.button`
-  padding: 10px 15px;
-  background-color: ${themeColors.primary};
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  margin-top: 10px;
-
-  &:hover {
-    background-color: #e65c50;
-  }
-`;
 
 const Input = styled.input`
   width: 48%;

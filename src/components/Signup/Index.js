@@ -7,6 +7,7 @@ import signupIllustration from "../../assets/images/signupIllustration.svg";
 import axios from "../../api/axiosInstance"; // Import axios
 import Footer from "../Footer/Index";
 import { useToast } from "../../context/Alert";
+import handleApplyClick from "../../utils/buttonClickTracker";
 
 const SignupContainer = styled.div`
   display: flex;
@@ -196,6 +197,11 @@ const SignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    handleApplyClick({
+      category: 'Register',
+      action: 'Sign Up',
+      label: 'Sign Up ' + formData?.email
+    })
     if (!validateForm()) return;
 
     setLoading(true);

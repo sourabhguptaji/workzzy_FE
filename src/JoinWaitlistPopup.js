@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import axios from "./api/axiosInstance"; // Import axios for API calls
 import { useToast } from "./context/Alert";
+import handleApplyClick from "./utils/buttonClickTracker";
 
 // Styled Components
 const Overlay = styled(motion.div)`
@@ -150,6 +151,11 @@ const JoinWaitlistPopup = ({ joinWaitlistRef }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    handleApplyClick({
+      category: 'Login',
+      action: 'Login',
+      label: 'Login - ' + formData?.email
+    })
     // Clear previous error messages
     setErrors({ ...errors, apiError: "" });
 

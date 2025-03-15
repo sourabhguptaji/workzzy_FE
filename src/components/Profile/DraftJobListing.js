@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { FaBullhorn, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
-import axiosInstance from '../../api/axiosInstance';
-
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { FaBullhorn, FaCheck, FaEye, FaTimes, FaTrash } from "react-icons/fa";
+import axiosInstance from "../../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const themeColors = {
-primary: '#121212',
-background: '#ffffff',
-text: '#333333',
-cardBackground: '#f9f9f9',
-buttonPrimary: '#007bff',
-buttonDanger: '#dc3545',
-border: '#e0e0e0'
+  primary: "#121212",
+  background: "#ffffff",
+  text: "#333333",
+  cardBackground: "#f9f9f9",
+  buttonPrimary: "#007bff",
+  buttonDanger: "#dc3545",
+  border: "#e0e0e0",
 };
 
 const Container = styled.div`
@@ -51,7 +51,7 @@ const JobCard = styled.div`
   border: 1px solid ${themeColors.border};
   transition: all 0.3s ease;
   width: 100%;
-    border: 1px dashed ${(props) => (props.published ? 'black' : 'red')};
+  border: 1px dashed ${(props) => (props.published ? "black" : "red")};
   &:hover {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   }
@@ -77,7 +77,7 @@ const JobStatus = styled.span`
   color: white;
   padding: 6px 12px;
   border-radius: 20px;
-  background: ${(props) => (props.published ? '#28a745' : '#6c757d')};
+  background: ${(props) => (props.published ? "#28a745" : "#6c757d")};
   align-self: flex-start;
 `;
 
@@ -88,7 +88,8 @@ const Actions = styled.div`
 `;
 
 const ActionButton = styled.button`
-  background: ${(props) => (props.primary ? 'black' : themeColors.buttonDanger)};
+  background: ${(props) =>
+    props.primary ? "black" : themeColors.buttonDanger};
   color: white;
   padding: 8px 14px;
   border-radius: 6px;
@@ -108,13 +109,13 @@ const ActionButton = styled.button`
 
 const JobListing = () => {
   const [posts, setPosts] = useState([]);
-
+const navigate = useNavigate()
   const fetchDraftPosts = async () => {
     try {
-      const response = await axiosInstance.get('/api/post/draft');
+      const response = await axiosInstance.get("/api/post/draft");
       setPosts(response.data.posts);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Error fetching posts:", error);
     }
   };
 
@@ -122,14 +123,17 @@ const JobListing = () => {
     fetchDraftPosts();
   }, []);
 
-  const handlePublish = async (id, status = 'published') => {
+  const handlePublish = async (id, status = "published") => {
     try {
-      const response = await axiosInstance.put(`/api/post/publish-draft/${id}`, { status });
+      const response = await axiosInstance.put(
+        `/api/post/publish-draft/${id}`,
+        { status }
+      );
       if (response.status === 200) {
         fetchDraftPosts();
       }
     } catch (error) {
-      console.error('Error updating job status:', error);
+      console.error("Error updating job status:", error);
     }
   };
 
@@ -143,26 +147,33 @@ const JobListing = () => {
           </JobCard>
         ) : (
           posts.map((job) => (
-            <JobCard key={job._id} published={job.status === 'published'}>
+            <JobCard key={job._id} published={job.status === "published"}>
               <JobInfo>
                 <JobTitle>{job.title}</JobTitle>
                 {/* <JobStatus published={job.status === 'published'}>
                   {job.status}
                 </JobStatus> */}
               </JobInfo>
-                 <Actions>
-                            {
-                                job.status === 'published'
-                                ?<ActionButton onClick={() => handlePublish(job._id, 'draft')}>
-                                <FaTrash /> Unpublish
-                              </ActionButton>
-                                :<ActionButton primary onClick={() => handlePublish(job._id, 'published')}>
-                                <FaBullhorn /> Publish
-                              </ActionButton>
-                              
-                              
-                            }
-                          </Actions>
+              <Actions>
+                <ActionButton
+                  style={{ background: "black" }}
+                  onClick={() => navigate(`/job/application/${job._id}`)}
+                >
+                  <FaEye /> View
+                </ActionButton>
+                {job.status === "published" ? (
+                  <ActionButton onClick={() => handlePublish(job._id, "draft")}>
+                    <FaTrash /> Unpublish
+                  </ActionButton>
+                ) : (
+                  <ActionButton
+                    primary
+                    onClick={() => handlePublish(job._id, "published")}
+                  >
+                    <FaBullhorn /> Publish
+                  </ActionButton>
+                )}
+              </Actions>
             </JobCard>
           ))
         )}

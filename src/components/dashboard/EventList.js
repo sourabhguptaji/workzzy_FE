@@ -7,7 +7,7 @@ import moment from "moment-timezone"
 const EventPoster = styled.div`
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 300px;
   border-radius: 15px;
   overflow: hidden;
   background: #ddd;
@@ -20,8 +20,8 @@ const EventPoster = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(2px);
-    opacity: 0.5;
+    filter: blur(1px);
+    opacity: 0.4;
     z-index: 0;
   }
 
@@ -108,11 +108,11 @@ const EventApplyButton = styled.button`
 
 const EventCard = styled.div`
   width: 100%;
-  max-width: 450px;
+  max-width: 350px;
   margin: auto;
   border-radius: 15px;
   background: #fff;
-  border: 2px dashed #ddd;
+  border: 1px solid #1e1e1e;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
 
@@ -124,11 +124,18 @@ const EventCard = styled.div`
 
 const ListContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(2, minmax(350px, 1fr));
   gap: 25px;
   margin-top: 20px;
-`;
 
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(300px, 1fr)); // 2 cards per row on tablets
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(1, minmax(300px, 1fr)); // 1 card per row on mobile
+  }
+`;
 const NoEvents = styled.p`
   text-align: center;
   font-size: 18px;
@@ -142,7 +149,7 @@ const EventList = ({ filteredPosts }) => {
     <ListContainer>
       {filteredPosts?.length <= 0 && <NoEvents>No events found in your area.</NoEvents>}
 
-      {filteredPosts.map((event) => (
+      {[...filteredPosts, ...filteredPosts].map((event) => (
         <EventCard key={event._id}>
        <EventPoster>
   {event.image && <img src={event.image} alt="Blurred Background" className="blur-bg" />}
@@ -162,7 +169,10 @@ const EventList = ({ filteredPosts }) => {
             />
             <EventDetails>
               <DetailChip><FaMapMarkerAlt color="#ff5a5f" /> {event?.city}</DetailChip>
-              <DetailChip><FaCalendarAlt color="#00aaff" /> {moment(event?.startDate)?.format("DD MMM YYYY")}</DetailChip>
+              <DetailChip>
+              <FaCalendarAlt color="#00aaff" /> {moment(event?.startDate).isBefore(moment(), "day") ? "Closed" : moment(event?.startDate).format("DD MMM YYYY")}
+              </DetailChip>
+
               <DetailChip>
                 {event?.eventType === "paid" ? (
                   <><FaRupeeSign color="#ff9900" /> {event?.entryFee}/-</>

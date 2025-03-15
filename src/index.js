@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { ToastProvider } from "./context/Alert"; 
-import TagManager from "react-gtm-module";
+import ReactGA from "react-ga4";
 
-const tagManagerArgs = {
-  gtmId: "GTM-TKWWPSZZ",
-};
-
-TagManager.initialize(tagManagerArgs);
+// Only initialize Google Analytics in production
+// if (window.location.hostname !== "localhost") {
+  ReactGA.initialize("G-RW0HCEKR36", {
+    testMode: true
+  });
+// }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
