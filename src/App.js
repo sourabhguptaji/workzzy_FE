@@ -19,6 +19,7 @@ import EventDetail from "./components/EventDetail/Index";
 import { PageViewTracker } from "./utils/pageTracker";
 import JobApplications from "./components/JobDetail/JobApplication";
 import AuthChecker from "./utils/AuthChecker";
+import PortfolioHome from "./components/portfolio/PortfolioHome";
 
 function Home() {
   const joinWaitlistRef = useRef();
@@ -52,6 +53,8 @@ function App() {
         <Route path="/detail/:postId" element={<JobDetail />} />
         <Route path="/job/application/:postId" element={<JobApplications />} />
         <Route path="/detail-event/:eventId" element={<EventDetail />} />
+
+        <Route path="/portfolio" element={<PortfolioHome />} />
         {/* Add more routes here as needed */}
       </Routes>
       </AuthChecker>
