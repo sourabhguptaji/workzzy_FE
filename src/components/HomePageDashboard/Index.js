@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Navbar from '../dashboard/AdminNavbar';
 import { motion } from "framer-motion";
-import { FaBriefcase, FaCalendarAlt, FaTicketAlt, FaTools, FaCar, FaUtensils, FaShoppingCart, FaUsers, FaHeart, FaMusic, FaFilm, FaPaintBrush, FaDumbbell, FaLaptop, FaGraduationCap, FaHome, FaBaby, FaPaw, FaBook, FaHospital } from 'react-icons/fa';
+import { FaBriefcase, FaCalendarAlt, FaTicketAlt, FaTools, FaMagic, FaUtensils, FaShoppingCart, FaUsers, FaHeart, FaMusic, FaFilm, FaPaintBrush, FaDumbbell, FaLaptop, FaGraduationCap, FaHome, FaBaby, FaPaw, FaBook, FaHospital } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import bussiness_deal from '../../assets/images/bussiness_deal.svg'
 import Footer from '../Footer/Index';
@@ -10,6 +10,7 @@ import Footer from '../Footer/Index';
 const categories = [
   { icon: <FaBriefcase />, name: 'Jobs' , live: true},
   { icon: <FaCalendarAlt />, name: 'Events' , live: true},
+  { icon: <FaMagic />, name: 'Skill Deck' , live: true, link: process.env.REACT_APP_SKILL_DECK_URL + '?auth=' + localStorage.getItem('workzzy_token')},
   { icon: <FaTicketAlt />, name: 'Sell Tickets' , live: false},
   { icon: <FaTools />, name: 'Services' , live: false},
   { icon: <FaUtensils />, name: 'Food & Beverage' , live: false},
@@ -123,7 +124,15 @@ const HomePageDashboard = () => {
         <h1>Explore Sections</h1>
         <CategoryGrid>
           {categories.map((category, index) => (
-            <CategoryCard key={index} onClick={() => category.live && navigate(`/dashboard/${category?.name}`)}>
+            <CategoryCard key={index}   onClick={() => {
+              if (category.live) {
+                if (category?.link) {
+                  window.location.href = category.link; // Redirects to an external platform
+                } else {
+                  navigate(`/dashboard/${category?.name}`); // Navigates within the app
+                }
+              }
+            }}>
               {category.icon}
               <span>{category.name}</span>
               {!category.live && <ComingSoonBadge>Coming Soon</ComingSoonBadge>}
